@@ -1,0 +1,205 @@
+<template>
+    <!-- <template if:true={isSpinner}>
+            <div class="exampleHolder">
+            <lightning-spinner alternative-text="Loading" size="xx-small"></lightning-spinner>
+        </div>
+    </template> -->
+    <!-- <lightning-button variant="brand" label="skill Demo" title="Primary action" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
+    <template if:true={isShowModal}>
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+		aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+		<div class="slds-modal__container" style="position: relative">
+            <template if:true={isSpinner}>
+                <div class="exampleHolder">
+                    <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                </div>
+            </template>
+			<header class="slds-modal__header">
+				<button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={hideModalBox}>
+                <lightning-icon icon-name="utility:close"
+                   alternative-text="close"
+                   variant="inverse"
+                   size="small" ></lightning-icon>
+                <span class="slds-assistive-text">Close</span>
+             </button>
+				<h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Skill Selection</h2>
+			</header>        
+
+
+			<div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+				<div class="slds-m-left_medium slds-m-right_medium slds-m-top_medium slds-m-bottom_medium"> -->
+                    <div style="position: relative;">
+                        <div style="background: #f3f3f3;" class="slds-m-top_medium">
+                            <template if:true={isSpinner}>
+                                <div class="exampleHolder">
+                                    <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                                </div>
+                            </template>
+                            <!-- <lightning-icon icon-name="utility:chevronright" alternative-text="right" title="right" onclick={removeSkillHandler}></lightning-icon> -->
+
+                            <lightning-accordion allow-multiple-sections-open onsectiontoggle={handleSectionToggle}>
+                                <lightning-accordion-section name="Y" label="Skill Selection">
+                                </lightning-accordion-section>
+                            </lightning-accordion>
+                        </div>
+
+                        <template lwc:if={allSectionClosed}>
+                            <div class="slds-grid slds-gutters">
+                                <div class="slds-col slds-size_2-of-12 slds-m-top_xxx-small">
+                                    <span>
+                                        <lightning-combobox
+                                            name=""
+                                            label=""
+                                            value={scValue}
+                                            placeholder="Select Progress"
+                                            options={skillCertificationOptions}
+                                            onchange={skillCertificationChanger} >
+                                        </lightning-combobox>
+                                    </span>
+                                </div>
+                                <div class="slds-col slds-size_8-of-12">
+                                    <span>
+                                        <template if:true={isSkillSetCertification}>
+                                            <div class="slds-card">
+                                                <div class="slds-form-element">
+                                                    <div class="slds-form-element__control">
+                                                        <lightning-input label="" type="search" onfocus={showPicklistOptions}
+                                                            onchange={search} value={selectedValueVisible}>
+                                                        </lightning-input>
+                                                        <div if:true={searchResults} class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid"
+                                                            role="listbox">
+                                                            <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                                                                <template for:each={searchResults} for:item="searchResult">
+                                                                    <li key={searchResult.value} data-name={searchResult.value} role="presentation"
+                                                                        onclick={selectSearchResult} class="slds-listbox__item">
+                                                                        <div data-name={searchResult.value} class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small "
+                                                                            role="option">
+                                                                            <span data-name={searchResult.value} class="slds-media__body">
+                                                                                <span data-name={searchResult.value} class="slds-truncate" title={searchResult.label}>
+                                                                                    {searchResult.label}
+                                                                                </span>
+                                                                            </span>
+                                                                        </div>
+                                                                    </li>
+                                                                </template>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </template>
+                                        <template if:false={isSkillSetCertification}>
+                                            <div class="slds-card">
+                                                <div class="slds-form-element">
+                                                    <div class="slds-form-element__control">
+                                                        <lightning-input label="" type="search" onfocus={showPicklistOptionsSet}
+                                                            onchange={searchSet} value={selectedValueVisibleSet}>
+                                                        </lightning-input>
+                                                        <div if:true={searchResultsSet} class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid"
+                                                            role="listbox">
+                                                            <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                                                                <template for:each={searchResultsSet} for:item="searchResult">
+                                                                    <li key={searchResult.value} data-name={searchResult.value} role="presentation"
+                                                                        onclick={selectSearchResultSet} class="slds-listbox__item">
+                                                                        <div data-name={searchResult.value} class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small "
+                                                                            role="option">
+                                                                            <span data-name={searchResult.value} class="slds-media__body">
+                                                                                <span data-name={searchResult.value} class="slds-truncate" title={searchResult.label}>
+                                                                                    {searchResult.label}
+                                                                                </span>
+                                                                            </span>
+                                                                        </div>
+                                                                    </li>
+                                                                </template>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </span>
+                                </div>
+                                <!-- <div class="slds-col slds-size_1-of-12 slds-m-top_large">
+                                    <span>
+                                        
+                                    </span>
+                                </div> -->
+                                <div class="slds-col slds-size_2-of-12 slds-m-top_medium">
+                                    <span>
+                                        <lightning-button class="slds-float_right" size="x-small" variant="neutral" label="Add" title="Add" onclick={addSkillHandler}></lightning-button>
+                                    </span>
+                                </div>
+                            </div><br>
+                            <template if:true={isSkillVisible}>
+                                <!-- <template if:true={skillCertificationData}> -->
+                                    <h1><b>Skills/Certifications</b></h1>
+                                    <c-custom-data-table-picklist
+                                            key-field="id"
+                                            data={skillCertificationData}
+                                            show-row-number-column
+                                            row-number-offset={rowOffset}
+                                            suppress-bottom-bar
+                                            columns={skillColumns}
+                                            
+                                            onvalueselect={handleSelection}
+                                            draft-values={draftValues} 
+                                            oncellchange={handleCellChange}
+
+                                            onrowaction={handleRowAction}
+                                            onrowselection={handleRowSelection}
+                                            selected-rows ={selectedIds}
+                                            
+                                            >
+                                    </c-custom-data-table-picklist>
+                                    <hr>
+
+                                    <template for:each={skillCertificationDataSet} for:item="sets">
+                                        <div key={sets.title}>
+                                            <h1><b>{sets.title}</b></h1>
+                                            <c-custom-data-table-picklist
+                                                    key-field="id"
+                                                    data-id={sets.setId}
+                                                    data={sets.data}
+                                                    show-row-number-column
+                                                    row-number-offset={rowOffset}
+                                                    suppress-bottom-bar
+                                                    columns={skillSetColumns}
+                                                    
+                                                    onvalueselect={handleSelection}
+                                                    draft-values={draftValues} 
+                                                    oncellchange={handleCellChangeSet}
+
+                                                    onrowaction={handleRowAction}
+                                                    onrowselection={handleRowSelectionSet}
+                                                    selected-rows ={sets.selectedIds}
+                                                    
+                                                    >
+                                            </c-custom-data-table-picklist><br>
+                                        </div>
+                                        
+                                    </template>
+                                <!-- </template> -->
+
+                            </template>
+                        </template>
+                    </div>
+                    
+                        
+                            
+                            <!-- <c-add-certification-skill skill-id={skillItem.id} minimum-rating={skillItem.minimumRating} selected-value-visible={skillItem.cetificationLabel} onskillhandler={childSkillHandler} onskillremover={skillremover} ></c-add-certification-skill> -->
+                    
+                    
+				<!-- </div>
+			</div>
+
+			<footer class="slds-modal__footer">
+				<button class="slds-button slds-button_neutral" onclick={hideModalBox}>Cancel</button>
+				<lightning-button variant="brand" label="Save" title="Save" onclick={handleSave}></lightning-button>
+			</footer>
+
+		</div>
+	</section>
+	<div class="slds-backdrop slds-backdrop_open"></div>
+    </template> -->
+
+</template>
