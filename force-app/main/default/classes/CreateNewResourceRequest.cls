@@ -28,9 +28,11 @@ public without sharing class CreateNewResourceRequest {
             String notes = (String) resourceObj.get('notes');
             String resourceRequestNameVal = (String) resourceObj.get('resourceRequestName');
         
-	    // start - CR-206
+            String preferredSchedule = (string) resourceObj.get('preferredSchedule'); // CR-175
+
+            // start - CR-206
             String reasonForSubcoHire = (string) resourceObj.get('reasonForSubcoHire'); 
-            Boolean contractorRequest = resourceObj.get('contractorRequest') != null ?           Boolean.valueOf(resourceObj.get('contractorRequest')) : false;
+            Boolean contractorRequest = resourceObj.get('contractorRequest') != null ? Boolean.valueOf(resourceObj.get('contractorRequest')) : false;
             // end - CR-206
         
             Decimal requestedBillRateVal =0;
@@ -41,7 +43,7 @@ public without sharing class CreateNewResourceRequest {
             Decimal plannedBillRateVal = 0;
             if(String.valueOf(resourceObj.get('plannedBillRate')) != '' && String.valueOf(resourceObj.get('requestedBillRate')) != NULL ){
                 plannedBillRateVal = Decimal.valueOf(String.valueOf(resourceObj.get('plannedBillRate')));
-            }            
+            }
 
             Date startdateValue = Date.valueOf(startDate);
             Date enddateValue = Date.valueOf(endDate);
@@ -120,13 +122,20 @@ public without sharing class CreateNewResourceRequest {
                 if(resourceRequestNameVal != ''){
                     rr.pse__Resource_Request_Name__c = resourceRequestNameVal;
                 }
+
+                // start - CR-175
+                if(String.isNotBlank(preferredSchedule)) {
+                    rr.pse__Preferred_Schedule__c = preferredSchedule;
+                }
+                // end - CR-175
+
                 // start - CR-206
                 rr.Contractor_Request__c = contractorRequest;
                 if(String.isNotBlank(reasonForSubcoHire)) {
                     rr.Reason_for_Subco_Hire__c =  reasonForSubcoHire;
                 }
                 // end - CR-206
-                
+
                 insert rr ;
                 //===================================================================
                 if(!certificationSkillObj.isEmpty()){
@@ -155,9 +164,13 @@ public without sharing class CreateNewResourceRequest {
             string certificationId = '';
             String minimumRating ='';
             String setId ='';
+            Boolean primarySkill = false; // CR-175
+
             certificationId = String.valueOf(certificationSkillObj[i].get('certificationId'));
             minimumRating = String.valueOf(certificationSkillObj[i].get('minimumRating'));
             setId = String.valueOf(certificationSkillObj[i].get('setId'));
+            primarySkill = Boolean.valueOf(certificationSkillObj[i].get('primarySkill')); // CR-175
+            
             if(certificationId != '' && minimumRating != ''){
                 pse__Resource_Skill_Request__c rsr = new pse__Resource_Skill_Request__c();
                 
@@ -168,6 +181,7 @@ public without sharing class CreateNewResourceRequest {
                 rsr.pse__Skill_Certification__c = certificationId;
                 rsr.pse__Minimum_Rating__c = minimumRating;
                 rsr.pse__Resource_Request__c = resourceRequestId;
+                rsr.pse__Is_Primary__c = primarySkill; // CR-175
                 rsrList.add(rsr);
             }
         }
@@ -198,7 +212,7 @@ public without sharing class CreateNewResourceRequest {
     public static list<picklistOptions> getSkillCertification(string searchValue){
         List<picklistOptions> optionsList = new List<picklistOptions>();
         
-        List<pse__Skill__c> scList = [select id,name from pse__Skill__c where IsActive__c = true and name like : searchValue limit 500];
+        List<pse__Skill__c> scList = [select id,name from pse__Skill__c where name like : searchValue limit 500];
         
         for( pse__Skill__c sc : scList)
         {
