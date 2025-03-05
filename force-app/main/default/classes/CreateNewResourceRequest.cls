@@ -28,7 +28,7 @@ public without sharing class CreateNewResourceRequest {
             String notes = (String) resourceObj.get('notes');
             String resourceRequestNameVal = (String) resourceObj.get('resourceRequestName');
         
-            String preferredSchedule = (string) resourceObj.get('preferredSchedule'); // CR-175
+            String preferredSchedule = (string) resourceObj.get('preferredSchedule'); // CR-191
 
             // start - CR-206
             String reasonForSubcoHire = (string) resourceObj.get('reasonForSubcoHire'); 
@@ -123,11 +123,11 @@ public without sharing class CreateNewResourceRequest {
                     rr.pse__Resource_Request_Name__c = resourceRequestNameVal;
                 }
 
-                // start - CR-175
+                // start - CR-191
                 if(String.isNotBlank(preferredSchedule)) {
                     rr.pse__Preferred_Schedule__c = preferredSchedule;
                 }
-                // end - CR-175
+                // end - CR-191
 
                 // start - CR-206
                 rr.Contractor_Request__c = contractorRequest;
