@@ -45,7 +45,17 @@
 
                         <template lwc:if={allSectionClosed}>
                             <div class="slds-grid slds-gutters">
-                                <div class="slds-col slds-size_2-of-12 slds-m-top_xxx-small">
+                                <!-- start - CR-175 -->
+                                <div class="slds-col slds-size_3-of-12 slds-p-right_none slds-m-top_large">
+                                    <lightning-input 
+                                    type="checkbox" 
+                                    name="primarySkill"
+                                    label="Primary Skill"
+                                    onchange={handlePrimarySkillChange}
+                                    checked={primarySkill}></lightning-input>
+                                </div>
+                                <div class="slds-col slds-size_3-of-12 slds-p-right_none slds-m-top_xxx-small"> 
+                                    <!-- end - CR-175 -->
                                     <span>
                                         <lightning-combobox
                                             name=""
@@ -57,7 +67,7 @@
                                         </lightning-combobox>
                                     </span>
                                 </div>
-                                <div class="slds-col slds-size_8-of-12">
+                                <div class="slds-col slds-size_4-of-12 slds-p-right_none"> <!-- CR-175 -->
                                     <span>
                                         <template if:true={isSkillSetCertification}>
                                             <div class="slds-card">
@@ -133,50 +143,54 @@
                             <template if:true={isSkillVisible}>
                                 <!-- <template if:true={skillCertificationData}> -->
                                     <h1><b>Skills/Certifications</b></h1>
+                                    <!-- start - CR-175 -->
                                     <c-custom-data-table-picklist
-                                            key-field="id"
-                                            data={skillCertificationData}
-                                            show-row-number-column
-                                            row-number-offset={rowOffset}
-                                            suppress-bottom-bar
-                                            columns={skillColumns}
-                                            
-                                            onvalueselect={handleSelection}
-                                            draft-values={draftValues} 
-                                            oncellchange={handleCellChange}
+                                        key-field="id"
+                                        hide-checkbox-column="true"
+                                        data={skillCertificationData}
+                                        show-row-number-column
+                                        row-number-offset={rowOffset}
+                                        suppress-bottom-bar
+                                        columns={skillColumns}
+                                        
+                                        onvalueselect={handleSelection}
+                                        draft-values={draftValues} 
+                                        oncellchange={handleCellChange}
 
-                                            onrowaction={handleRowAction}
-                                            onrowselection={handleRowSelection}
-                                            selected-rows ={selectedIds}
-                                            
-                                            >
+                                        onrowaction={handleRowAction}
+                                        onrowselection={handleRowSelection}
+                                        selected-rows ={selectedIds}
+                                    >
                                     </c-custom-data-table-picklist>
+                                    <!-- end - CR-175 -->
                                     <hr>
 
                                     <template for:each={skillCertificationDataSet} for:item="sets">
+                                       <!-- start - CR-175 -->
                                         <div key={sets.title}>
                                             <h1><b>{sets.title}</b></h1>
                                             <c-custom-data-table-picklist
-                                                    key-field="id"
-                                                    data-id={sets.setId}
-                                                    data={sets.data}
-                                                    show-row-number-column
-                                                    row-number-offset={rowOffset}
-                                                    suppress-bottom-bar
-                                                    columns={skillSetColumns}
-                                                    
-                                                    onvalueselect={handleSelection}
-                                                    draft-values={draftValues} 
-                                                    oncellchange={handleCellChangeSet}
+                                                key-field="id"
+                                                hide-checkbox-column="true"
+                                                data-id={sets.setId}
+                                                data={sets.data}
+                                                show-row-number-column
+                                                row-number-offset={rowOffset}
+                                                suppress-bottom-bar
+                                                columns={skillSetColumns}
+                                                
+                                                onvalueselect={handleSelection}
+                                                draft-values={draftValues} 
+                                                oncellchange={handleCellChangeSet}
 
-                                                    onrowaction={handleRowAction}
-                                                    onrowselection={handleRowSelectionSet}
-                                                    selected-rows ={sets.selectedIds}
-                                                    
-                                                    >
+                                                onrowaction={handleRowAction}
+                                                onrowselection={handleRowSelectionSet}
+                                                selected-rows ={sets.selectedIds}
+                                                
+                                            >
                                             </c-custom-data-table-picklist><br>
                                         </div>
-                                        
+                                        <!-- end - CR-175 -->
                                     </template>
                                 <!-- </template> -->
 

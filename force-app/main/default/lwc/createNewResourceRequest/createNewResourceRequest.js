@@ -1,15 +1,15 @@
-import { LightningElement, track, api, wire} from 'lwc';
 import createResourceRequest from '@salesforce/apex/CreateNewResourceRequest.createResourceRequest';
 import getOpportunityRecord from '@salesforce/apex/PSAPlatformUtility.getOpportunityRecord';
+import { api, LightningElement, track, wire } from 'lwc'; // CR-175
 
-import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { CloseActionScreenEvent } from 'lightning/actions';
 import { NavigationMixin } from 'lightning/navigation';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
-import { getRecord } from 'lightning/uiRecordApi';
-import USER_ID from '@salesforce/user/Id';
-import USERPROFILE_ID from '@salesforce/schema/User.ProfileId';
 import USERPROFILE_NAME from '@salesforce/schema/User.Profile.Name';
+import USERPROFILE_ID from '@salesforce/schema/User.ProfileId';
+import USER_ID from '@salesforce/user/Id';
+import { getRecord } from 'lightning/uiRecordApi';
 
 export default class CreateNewResourceRequest extends NavigationMixin(LightningElement) {
     userId = USER_ID;
@@ -41,6 +41,7 @@ export default class CreateNewResourceRequest extends NavigationMixin(LightningE
     requestedBillRate
     plannedBillRate
     minimumRating
+    preferredSchedule = ''; // CR-191
 
     oppId ='';
     oppOwnerValue ='';
@@ -89,6 +90,8 @@ export default class CreateNewResourceRequest extends NavigationMixin(LightningE
         plannedBillRate:'',
         minimumRating:'',
         selectedValue:'',
+        preferredSchedule: '', // CR-191
+
         contractorRequest: '', // CR-206
         reasonForSubcoHire: '', // CR-206
     };
@@ -166,15 +169,16 @@ export default class CreateNewResourceRequest extends NavigationMixin(LightningE
             this.oppDealType = data.Deal_Type__c;   
         } else if (error) {
             console.log('error @@@ '+JSON.stringify(error));
-              if(error.body.message.includes('You do not have access')){
-            console.log('@@ error -- '+JSON.stringify(error));
+            if(error.body.message.includes('You do not have access')){
+                console.log('@@ error -- '+JSON.stringify(error));
                 const evt =  new ShowToastEvent({
                     title: error.statusText,
                     message: error.body.message,
                     variant: 'error'
                 });
-        this.dispatchEvent(evt);  
-            }                      
+                this.dispatchEvent(evt);  
+            }
+
             this.oppOwnerValue = '';
             this.oppNameValue = '';
 
@@ -197,21 +201,32 @@ export default class CreateNewResourceRequest extends NavigationMixin(LightningE
         // ===========================================================================================================================
         let tempResourceRequestData =[];
         let allSkillIsFilled = true; 
+        let countPrimarySkill = 0; // CR-175
+
         if(this.certificationDataList.length > 0){
+            // start - CR-175
             this.certificationDataList[0].skillCertificationData.forEach(ele => {
-                if(this.certificationDataList[0].selectedIds.includes(ele.id)){
-                    let tempObj ={"certificationId": ele.id, "minimumRating": ele.minimumRating, "setId": ''};
+                // if(this.certificationDataList[0].selectedIds.includes(ele.id)){
+                    let tempObj ={ "certificationId": ele.id, "minimumRating": ele.minimumRating, "setId": "", primarySkill: ele.primarySkill };
                     tempResourceRequestData.push(tempObj);
-                }
+                    if(ele.primarySkill) {
+                        countPrimarySkill += 1;
+                    }
+                // }
             })
             this.certificationDataList[0].skillCertificationDataSet.forEach(ele => {
                 ele.data.forEach(childEle => {
-                    if(ele.selectedIds.includes(childEle.id)){
-                        let tempObj ={"certificationId": childEle.id, "minimumRating": childEle.minimumRating, "setId": ele.setId};
+                    // if(ele.selectedIds.includes(childEle.id)){
+                        let tempObj ={ "certificationId": childEle.id, "minimumRating": childEle.minimumRating, "setId": ele.setId, primarySkill: this.primarySkill };
                         tempResourceRequestData.push(tempObj);
-                    }
+                        if(ele.primarySkill) {
+                            countPrimarySkill += 1;
+                        }
+                    // }
                 })
             })
+            // end - CR-175
+
             // ============================================================================================================================
             
             tempResourceRequestData.forEach(ele => {
@@ -225,7 +240,13 @@ export default class CreateNewResourceRequest extends NavigationMixin(LightningE
             })
         }
 
-        if (allValid){
+        // start - CR-175
+        if(countPrimarySkill < 1) {
+            this.toastMassage('Error','error','Please select a primary skill.');
+        } else if (countPrimarySkill > 1) {
+            this.toastMassage('Error','error','Please select just one primary skill.');
+        } else if (allValid){
+        // end - CR-175
             if(allSkillIsFilled){
                 this.isSpinner = true;
                 this.jsonObject['oppName'] = this.oppNameValue;

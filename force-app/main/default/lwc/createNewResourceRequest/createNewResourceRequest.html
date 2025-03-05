@@ -1,75 +1,103 @@
 <template>
     <template if:true={isShowModal}>
-    
-	<section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
-		aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
-		<div class="slds-modal__container">
-            <template if:true={isSpinner}>
-                <div class="exampleHolder">
-                    <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
-                </div>
-            </template>
-			<header class="slds-modal__header">
-				<button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={hideModalBox}>
-                <lightning-icon icon-name="utility:close"
-                   alternative-text="close"
-                   variant="inverse"
-                   size="small" ></lightning-icon>
-                <span class="slds-assistive-text">Close</span>
-             </button>
-				<h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Resource Request</h2>
-			</header>        
+
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+            aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <template if:true={isSpinner}>
+                    <div class="exampleHolder">
+                        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                    </div>
+                </template>
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                        title="Close" onclick={hideModalBox}>
+                        <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
+                            size="small"></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Resource Request</h2>
+                </header>
 
 
-			<div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
-				<div class="slds-m-left_medium slds-m-right_medium slds-m-top_medium slds-m-bottom_medium">
-                    <lightning-record-edit-form object-api-name="pse__Resource_Request__c" onload={handleOnLoad}>
-                        <!-- <template if:false={isSpinner}> -->
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <div class="slds-m-left_medium slds-m-right_medium slds-m-top_medium slds-m-bottom_medium">
+                        <lightning-record-edit-form object-api-name="pse__Resource_Request__c" onload={handleOnLoad}>
+                            <!-- <template if:false={isSpinner}> -->
                             <div class="slds-grid slds-gutters">
                                 <div class="slds-col slds-size_6-of-12">
                                     <span>
-                                   
+
                                         <lightning-messages> </lightning-messages>
-                                        
-                                        <lightning-input-field field-name="OPX_ID__c" name="opxId" required onchange={recordEditHandler}> </lightning-input-field>
-                                        <lightning-input-field field-name="pse__Start_Date__c" name="startDate" onchange={recordEditHandler}> </lightning-input-field>
-                                        <lightning-input-field field-name="pse__End_Date__c" required name="endDate" onchange={recordEditHandler}> </lightning-input-field>
-                                        <lightning-input-field field-name="pse__SOW_Hours__c" required name="hours" onchange={recordEditHandler}> </lightning-input-field>
-                                        <lightning-input-field field-name="pse__Region__c" required name="region" onchange={recordEditHandler}> </lightning-input-field>
-                                        <lightning-input-field field-name="pse__Practice__c" name='practice' required onchange={recordEditHandler}> </lightning-input-field>
-                                        <lightning-input-field field-name="pse__Group__c" name='group' onchange={recordEditHandler}> </lightning-input-field>
 
-                                        <lightning-input-field field-name="pse__Resource_Role__c" name='resourceRole' required onchange={recordEditHandler}> </lightning-input-field>
-                                        <lightning-input-field field-name="Labor_Type__c" name='laborType' onchange={recordEditHandler}> </lightning-input-field>
+                                        <lightning-input-field field-name="OPX_ID__c" name="opxId" required
+                                            onchange={recordEditHandler}> </lightning-input-field>
+                                        <lightning-input-field field-name="pse__Start_Date__c" name="startDate"
+                                            onchange={recordEditHandler}> </lightning-input-field>
+                                        <lightning-input-field field-name="pse__End_Date__c" required name="endDate"
+                                            onchange={recordEditHandler}> </lightning-input-field>
+                                        <lightning-input-field field-name="pse__SOW_Hours__c" required name="hours"
+                                            onchange={recordEditHandler}> </lightning-input-field>
+                                        <lightning-input-field field-name="pse__Region__c" required name="region"
+                                            onchange={recordEditHandler}> </lightning-input-field>
+                                        <lightning-input-field field-name="pse__Practice__c" name='practice' required
+                                            onchange={recordEditHandler}> </lightning-input-field>
+                                        <lightning-input-field field-name="pse__Group__c" name='group'
+                                            onchange={recordEditHandler}> </lightning-input-field>
 
-                                        <lightning-input-field field-name="pse__Request_Priority__c" name='requestPriority' onchange={recordEditHandler}> </lightning-input-field>
-                                        <lightning-input-field field-name="Low_Cost_Resource__c" name='lowCostResource' onchange={recordEditHandler}> </lightning-input-field>
+                                        <lightning-input-field field-name="pse__Resource_Role__c" name='resourceRole'
+                                            required onchange={recordEditHandler}> </lightning-input-field>
+                                        <lightning-input-field field-name="Labor_Type__c" name='laborType'
+                                            onchange={recordEditHandler}> </lightning-input-field>
+
+                                        <lightning-input-field field-name="pse__Request_Priority__c"
+                                            name='requestPriority' onchange={recordEditHandler}>
+                                        </lightning-input-field>
+                                        <lightning-input-field field-name="Low_Cost_Resource__c" name='lowCostResource'
+                                            onchange={recordEditHandler}> </lightning-input-field>
+
+                                        <!-- start - CR-191 -->
+                                        <lightning-input-field field-name="pse__Preferred_Schedule__c"
+                                            name='preferredSchedule' onchange={recordEditHandler}>
+                                        </lightning-input-field>
+                                        <!-- end - CR-191 -->
+                                    
                                     </span>
                                 </div>
                                 <div class="slds-col slds-size_6-of-12">
                                     <span>
                                         <br><label><b>Opportunity Name :</b> {oppNameValue}</label><br>
                                         <br>
-                                        
+
                                         <label><b>Opportunity Owner :</b> {oppOwnerValue}</label><br>
                                         <br>
-                                        
+
                                         <label><b>Stage Name :</b> {oppoStageName}</label><br>
                                         <br>
-                                        
+
                                         <label><b>Close Date :</b> {oppCloseDate}</label><br>
                                         <br>
-                                        
+
                                         <label><b>Deal Type :</b> {oppDealType}</label><br>
                                         <br>
 
-                                        <lightning-input-field field-name="Delivery_Role__c" name='deliveryRole' required onchange={recordEditHandler}> </lightning-input-field>
-                                        <lightning-input-field field-name="pse__Resource__c" name='resource' onchange={recordEditHandler}> </lightning-input-field>
-                                        <lightning-input-field field-name="pse__Resource_Request_Name__c" name='resourceRequestName' onchange={recordEditHandler}> </lightning-input-field>
-                                        <lightning-input-field field-name="pse__Requested_Bill_Rate__c" name='requestedBillRate' onchange={recordEditHandler}> </lightning-input-field>
-                                        <lightning-input-field field-name="pse__Planned_Bill_Rate__c" name='plannedBillRate' onchange={recordEditHandler}> </lightning-input-field>
-                                        <lightning-input-field field-name="pse__Notes__c" name='notes' onchange={recordEditHandler}> </lightning-input-field>
-                                                    <!-- start - CR-206 -->
+                                        <lightning-input-field field-name="Delivery_Role__c" name='deliveryRole'
+                                            required onchange={recordEditHandler}> </lightning-input-field>
+                                        <lightning-input-field field-name="pse__Resource__c" name='resource'
+                                            onchange={recordEditHandler}> </lightning-input-field>
+                                        <lightning-input-field field-name="pse__Resource_Request_Name__c"
+                                            name='resourceRequestName' onchange={recordEditHandler}>
+                                        </lightning-input-field>
+                                        <lightning-input-field field-name="pse__Requested_Bill_Rate__c"
+                                            name='requestedBillRate' onchange={recordEditHandler}>
+                                        </lightning-input-field>
+                                        <lightning-input-field field-name="pse__Planned_Bill_Rate__c"
+                                            name='plannedBillRate' onchange={recordEditHandler}>
+                                        </lightning-input-field>
+                                        <lightning-input-field field-name="pse__Notes__c" name='notes'
+                                            onchange={recordEditHandler}> </lightning-input-field>
+
+                                        <!-- start - CR-206 -->
                                         <lightning-input-field field-name="Contractor_Request__c"
                                             name='contractorRequest' onchange={recordEditHandler}>
                                         </lightning-input-field>
@@ -77,42 +105,51 @@
                                         <lightning-input-field field-name="Reason_for_Subco_Hire__c"
                                             name='reasonForSubcoHire' onchange={recordEditHandler}>
                                         </lightning-input-field>
-                                        <!-- end - CR-206 -->                    
-                                    
+                                        <!-- end - CR-206 -->
                                     </span>
                                 </div>
                             </div><br>
                             <div>
-                                <lightning-accordion allow-multiple-sections-open   >
-                                    <lightning-accordion-section name="GSAP-Accounts" label="For GSAP accounts/WBS codes only">
-                                            <div class="slds-grid slds-gutters">
-                                                <div class="slds-col slds-size_6-of-12">
-                                                    <lightning-input-field field-name="Project_Key__c" name='projectKey' onchange={recordEditHandler}> </lightning-input-field>
-                                                    <lightning-input-field field-name="Billing_Key_Text__c" name='billingKey' onchange={recordEditHandler}> </lightning-input-field>
-                                                </div>
-                                                <div class="slds-col slds-size_6-of-12">
-                                                    <lightning-input-field field-name="Bill_Rate_is_Daily_Rate__c" name='billRateDailyRate' onchange={recordEditHandler}> </lightning-input-field>
-                                                    <lightning-input-field field-name="Billing_Key_Description__c" name='billingKeyDescription' onchange={recordEditHandler}> </lightning-input-field>
-                                                </div>
+                                <lightning-accordion allow-multiple-sections-open>
+                                    <lightning-accordion-section name="GSAP-Accounts"
+                                        label="For GSAP accounts/WBS codes only">
+                                        <div class="slds-grid slds-gutters">
+                                            <div class="slds-col slds-size_6-of-12">
+                                                <lightning-input-field field-name="Project_Key__c" name='projectKey'
+                                                    onchange={recordEditHandler}> </lightning-input-field>
+                                                <lightning-input-field field-name="Billing_Key_Text__c"
+                                                    name='billingKey' onchange={recordEditHandler}>
+                                                </lightning-input-field>
+                                            </div>
+                                            <div class="slds-col slds-size_6-of-12">
+                                                <lightning-input-field field-name="Bill_Rate_is_Daily_Rate__c"
+                                                    name='billRateDailyRate' onchange={recordEditHandler}>
+                                                </lightning-input-field>
+                                                <lightning-input-field field-name="Billing_Key_Description__c"
+                                                    name='billingKeyDescription' onchange={recordEditHandler}>
+                                                </lightning-input-field>
+                                            </div>
                                         </div>
                                     </lightning-accordion-section>
                                 </lightning-accordion>
                             </div>
-                        <!-- </template> -->
-                    </lightning-record-edit-form>
-                            <c-add-certification-skill onskillcertificationhandler={skillcertificationhandler}> </c-add-certification-skill>
-                    
-				</div>
-			</div>
+                            <!-- </template> -->
+                        </lightning-record-edit-form>
+                        <c-add-certification-skill onskillcertificationhandler={skillcertificationhandler}>
+                        </c-add-certification-skill>
 
-			<footer class="slds-modal__footer">
-				<lightning-button class="slds-m-right_small" variant="brand" label="Save" title="Save" onclick={handleSave}></lightning-button>
-				<button class="slds-button slds-button_neutral" onclick={hideModalBox}>Cancel</button>
-			</footer>
+                    </div>
+                </div>
 
-		</div>
-	</section>
-	<div class="slds-backdrop slds-backdrop_open"></div>
+                <footer class="slds-modal__footer">
+                    <lightning-button class="slds-m-right_small" variant="brand" label="Save" title="Save"
+                        onclick={handleSave}></lightning-button>
+                    <button class="slds-button slds-button_neutral" onclick={hideModalBox}>Cancel</button>
+                </footer>
+
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
 
 
     </template>

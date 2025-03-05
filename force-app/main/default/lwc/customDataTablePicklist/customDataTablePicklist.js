@@ -1,3 +1,4 @@
+// ==== start - CR -175 - ===== //
 import LightningDatatable from 'lightning/datatable';
 import minimumRatingColumn from './minimumRatingColumn.html';
 import picklistColumn from './picklistColumn.html';
@@ -24,3 +25,4 @@ export default class CustomDataTablePicklist extends LightningDatatable {
         },
     };
 }
+// ==== end - CR -175 - ===== //
