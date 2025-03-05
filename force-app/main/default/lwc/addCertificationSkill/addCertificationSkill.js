@@ -1,9 +1,9 @@
-import { LightningElement,wire,api,track } from 'lwc';
-import getSkillCertification from '@salesforce/apex/CreateNewResourceRequest.getSkillCertification';
-import getSkillSet from '@salesforce/apex/CreateNewResourceRequest.getSkillSet';
-import getSkillRatings from '@salesforce/apex/CreateNewResourceRequest.getSkillRatings';
 import getSetOfSkillCertifications from '@salesforce/apex/CreateNewResourceRequest.getSetOfSkillCertifications';
+import getSkillCertification from '@salesforce/apex/CreateNewResourceRequest.getSkillCertification';
+import getSkillRatings from '@salesforce/apex/CreateNewResourceRequest.getSkillRatings';
+import getSkillSet from '@salesforce/apex/CreateNewResourceRequest.getSkillSet';
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
+import { api, LightningElement, track, wire } from 'lwc';
 
 
 
@@ -35,7 +35,7 @@ export default class AddCertificationSkill extends LightningElement {
 
     ratingOptions =[];
 
-    skillCertificationData=[];
+    @track skillCertificationData=[]; // CR-175
     skillCertificationDataSet=[];
 
     isSkillVisible = false;
@@ -48,51 +48,89 @@ export default class AddCertificationSkill extends LightningElement {
     actions = [
         { label: 'Remove Skill', name: 'Remove Skill' },
     ];
+
+    // ====  start - CR-175 ===== //
     skillColumns = [
-        { label: 'Skill / Certification', fieldName: 'name' },
-        // { label: 'Minimum Rating', fieldName: 'website', type: 'url', editable: true },
         {
-            label: 'Minimum Rating', fieldName: 'minimumRating', type: 'picklistColumn', editable: true, typeAttributes: {
-                placeholder: 'Choose Type', options: { fieldName: 'pickListOptions' }, 
-                value: { fieldName: 'minimumRating' }, // default value for picklist,
-                context: { fieldName: 'Id' } // binding account Id with context variable to be returned back
+            label: 'Primary Skill',
+            fieldName: 'primarySkill',
+            type: 'primarySkillColumn',
+            typeAttributes: {
+                value: { fieldName: 'primarySkill' },
+                context: { fieldName: 'id' },
+                rowId: { fieldName: 'id' },
             },
-            
         },
+        { label: 'Skill / Certification', fieldName: 'name' },
+        {
+            label: 'Minimum Rating',
+            fieldName: 'minimumRating',
+            type: 'minimumRatingColumn',
+            typeAttributes: {
+                value: { fieldName: 'minimumRating' },
+                context: { fieldName: 'id' },
+                rowId: { fieldName: 'id' },
+                placeholder: 'Choose Type', 
+                options: { fieldName: 'pickListOptions' },
+            },
+        },
+        // ====  end - CR-175 ===== //
         {
             type: 'action',
             typeAttributes: { rowActions: this.actions },
         },
-       
     ];
 
     // Skill set Columns
     actionsSet = [
         { label: 'Remove Skill Set', name: 'Remove Skill Set' },
     ];
+
+    // ====  start - CR-175 ===== //
     skillSetColumns = [
-        { label: 'Skill / Certification', fieldName: 'name' },
-        // { label: 'Minimum Rating', fieldName: 'website', type: 'url', editable: true },
+        // { label: 'Primary Skill', fieldName: 'primarySkill', type: 'boolean', editable: true },
         {
-            label: 'Minimum Rating', fieldName: 'minimumRating', type: 'picklistColumn', editable: true, typeAttributes: {
-                placeholder: 'Choose Type', options: { fieldName: 'pickListOptions' }, 
-                value: { fieldName: 'minimumRating' }, // default value for picklist,
-                context: { fieldName: 'Id' } // binding account Id with context variable to be returned back
+            label: 'Primary Skill',
+            fieldName: 'primarySkill',
+            type: 'primarySkillColumn',
+            typeAttributes: {
+                value: { fieldName: 'primarySkill' },
+                context: { fieldName: 'id' },
+                rowId: { fieldName: 'id' },
             },
-            
         },
+        { label: 'Skill / Certification', fieldName: 'name' },
+        // {
+        //     label: 'Minimum Rating', fieldName: 'minimumRating', type: 'picklistColumn', editable: true, typeAttributes: {
+        //         placeholder: 'Choose Type', options: { fieldName: 'pickListOptions' }, 
+        //         value: { fieldName: 'minimumRating' }, // default value for picklist,
+        //         context: { fieldName: 'Id' } // binding account Id with context variable to be returned back
+        //     },
+        // },
+        {
+            label: 'Minimum Rating',
+            fieldName: 'minimumRating',
+            type: 'minimumRatingColumn',
+            typeAttributes: {
+                value: { fieldName: 'minimumRating' },
+                context: { fieldName: 'id' },
+                rowId: { fieldName: 'id' },
+                placeholder: 'Choose Type', 
+                options: { fieldName: 'pickListOptions' },
+            },
+        },
+        // ====  end - CR-175 ===== //
         {
             type: 'action',
             typeAttributes: { rowActions: this.actionsSet },
         },
-       
     ];
 
     skillCertificationOptions=[
-                {"label": 'Skill/Certification' , "value":'Skill/Certification'},
-                {"label": 'Skill Set' , "value":'Skill Set'}
+        {"label": 'Skill/Certification' , "value":'Skill/Certification'},
+        {"label": 'Skill Set' , "value":'Skill Set'}
 
-            ]
+    ];
 
     handleClick(event){
         this.isShowModal = true
@@ -122,6 +160,13 @@ export default class AddCertificationSkill extends LightningElement {
         }, "1000");
         console.log('isSkillSetCertification 2 '+this.isSkillSetCertification);
     }
+
+    // ====  start - CR-175 ===== //
+    primarySkill = false;
+    handlePrimarySkillChange() {
+        this.primarySkill = !this.primarySkill;
+    }
+    // ====  end - CR-175 ===== //
 
     @wire (getSkillCertification, { searchValue: "$searchValue" })
     skillCertification({error, data }){
@@ -182,45 +227,59 @@ export default class AddCertificationSkill extends LightningElement {
         if( this.scValue == 'Skill/Certification'){
             //05-07-2024 == new line added 186-188 and 232
             if(this.selectedSearchResult == undefined){
+                debugger;
                 this.showNotification('Error', 'Please select at least one Sklii/Certification', 'error');
             }else{
                 let isDuplicate = false;
+                 // ====  start - CR-175 ===== //
                 this.skillCertificationData.forEach(ele => {
-                if(ele.id == this.selectedSearchResult.value){
-                    isDuplicate = true;
-                }  
+                    if(ele.id == this.selectedSearchResult.value) {
+                        isDuplicate = true;
+                    }
                 })
-                if(isDuplicate){
+                if(isDuplicate) {
                     this.showNotification('Error', 'Duplicate skill selected.', 'error');
-                }else{
-                    console.log('in else----');
+                } else {
+                // ====  end - CR-175 ===== //
                     this.selectedValueVisible = '';
                     // this.isSkillSetCertification = true;
                     console.log('this.skillCertificationData 1 '+JSON.stringify(this.skillCertificationData));
                     this.isSpinner = true;
                     this.isSkillVisible = false;
 
-                    let tempskillCertificationData=this.skillCertificationData;
-                    this.skillCertificationData =[];
-                    console.log('1111111111111');
+                    // ====  start - CR-175 ===== //
+                    let tempskillCertificationData =  this.skillCertificationData ? JSON.parse(JSON.stringify(this.skillCertificationData)) : [];
+                    this.skillCertificationData = [];
                     console.log('this.selectedSearchResult '+JSON.stringify(this.selectedSearchResult));
-                    let temp={"id":this.selectedSearchResult.value, "name":this.selectedSearchResult.label, "pickListOptions": '', "minimumRating":'', "isSetofSkill": false};
+
+                    let temp={
+                        "id":this.selectedSearchResult.value,
+                        "name":this.selectedSearchResult.label,
+                        "pickListOptions": "",
+                        "minimumRating": "",
+                        "isSetofSkill": false,
+                        "primarySkill": this.primarySkill,
+                    };
                     tempskillCertificationData.push(temp);
-                    console.log('222222222222');
-                    if(!this.selectedIds.includes(this.selectedSearchResult.value)){
-                        this.selectedIds.push(this.selectedSearchResult.value);
-                    }
-                    console.log('33333333333333');
+                    
+                    // if(!this.selectedIds.includes(this.selectedSearchResult.value)){
+                    //     this.selectedIds.push(this.selectedSearchResult.value);
+                    // }
+
+                    //Always select the new adding skill as selectedIds
+                    this.selectedIds.push(this.selectedSearchResult.value);
+
+                    // ====  end - CR-175 ===== //
                     tempskillCertificationData.forEach(ele => {
                         ele.pickListOptions = this.ratingOptions;
                     });
                     this.skillCertificationData = tempskillCertificationData;
-                    console.log('4444444444444444');
+
                     setTimeout(() => {
                         this.isSkillVisible = this.skillCertificationData.length>0 ? true : false;
                         this.isSpinner = false;
                     }, "2000");
-                    console.log('555555555555555');
+
                     this.dispatchEvent(new CustomEvent('skillcertificationhandler', {
                         detail: {
                             skillCertificationData: this.skillCertificationData,
@@ -229,6 +288,7 @@ export default class AddCertificationSkill extends LightningElement {
                             isSpinner: true
                         }
                     }));
+                    this.primarySkill = false; // CR-175
                     this.selectedSearchResult = undefined;
                     console.log('this.skillCertificationData 2 '+JSON.stringify(this.skillCertificationData));
                     // this.skillCertificationData.forEach(ele => {
@@ -239,14 +299,17 @@ export default class AddCertificationSkill extends LightningElement {
         }else if(this.scValue ==  'Skill Set'){
             //=========  05-07-2024 == new line added 241-243 and 302 ========================================================
             if(this.selectedSearchResultSet == undefined){
+                debugger;
                 this.showNotification('Error', 'Please select at least one SkillSet', 'error');
             }else{
                 let isDuplicate = false;
+                // ====  start - CR-175 ===== //
                 this.skillCertificationDataSet.forEach(ele => {
-                if(ele.setId == this.selectedSearchResultSet.value){
-                    isDuplicate = true;
-                }  
+                    if(ele.setId == this.selectedSearchResultSet.value){
+                        isDuplicate = true;
+                    }  
                 })
+                // ====  end - CR-175 ===== //
                 if(isDuplicate){
                     this.showNotification('Error', 'Duplicate skill sets selected.', 'error');
                 }else{
@@ -271,7 +334,18 @@ export default class AddCertificationSkill extends LightningElement {
                             let selectedIds =[];
                             result.forEach(ele => {
                                 selectedIds.push(ele.pse__Skill_Certification__c);
-                                let temp={"id":ele.pse__Skill_Certification__c, "name":ele.pse__Skill_Certification__r.Name, "pickListOptions": '', "minimumRating":'', "isSetofSkill": true, "setId":result[0].pse__Skill_Set__c, checked: true};
+                                // ====  start - CR-175 ===== //
+                                let temp={
+                                    "id":ele.pse__Skill_Certification__c, 
+                                    "name":ele.pse__Skill_Certification__r.Name, 
+                                    "pickListOptions": '', 
+                                    "minimumRating":'', 
+                                    "isSetofSkill": true, 
+                                    "setId":result[0].pse__Skill_Set__c, 
+                                    checked: true,
+                                    primarySkill: this.primarySkill,
+                                };
+                                // ====  end - CR-175 ===== //
                                 tempskillCertificationData.push(temp);
                                 
                                 tempskillCertificationData.forEach(ele => {
@@ -282,7 +356,14 @@ export default class AddCertificationSkill extends LightningElement {
                             let setName = result[0].pse__Skill_Set__r.Name;
                             // this.skillCertificationDataSet.push({setName: tempskillCertificationData});
                             
-                            tempskillCertificationDataSet.push({"setId":result[0].pse__Skill_Set__c ,"title":setName ,"data": tempskillCertificationData, "selectedIds":selectedIds});
+                             // ====  start - CR-175 ===== //
+                            tempskillCertificationDataSet.push({
+                                "setId":result[0].pse__Skill_Set__c ,
+                                "title":setName ,
+                                "data": tempskillCertificationData,
+                                "selectedIds":selectedIds
+                            });
+                             // ====  end - CR-175 ===== //
                             this.skillCertificationDataSet = tempskillCertificationDataSet;
 
                             setTimeout(() => {
@@ -326,7 +407,7 @@ export default class AddCertificationSkill extends LightningElement {
             temp.push(ele.id);
         })
         this.selectedIds = temp;
-        console.log('selectedIds-- '+this.selectedIds);
+        console.log('selectedIds-- ' + this.selectedIds);
 
 
         this.dispatchEvent(new CustomEvent('skillcertificationhandler', {
@@ -483,42 +564,92 @@ export default class AddCertificationSkill extends LightningElement {
                             }
                         }));
             }
-            
-    
-
-
-     }
-
-    handleCellChange(event) {
-        //this.updateDraftValues(event.detail.draftValues[0]);
-        console.log('draft val==  '+JSON.stringify( event.detail));
-
-        this.skillCertificationData.forEach(ele => {
-            if(ele.id == event.detail.draftValues[0].id){
-                ele["minimumRating"] = event.detail.draftValues[0].minimumRating;
-            }
-        })
-        this.dispatchEvent(new CustomEvent('skillcertificationhandler', {
-            detail: {
-                skillCertificationData: this.skillCertificationData,
-                skillCertificationDataSet: this.skillCertificationDataSet,
-                selectedIds: this.selectedIds,
-                isSpinner: true
-            }
-        }));
-        console.log('this.skillCertificationData 3 '+JSON.stringify(this.skillCertificationData));
-
     }
+
+     // ====  start - CR-175 ===== //
+    parseData = (data) => {
+        return data !== undefined ? JSON.parse(JSON.stringify(data)) : null;
+    }
+
+    autoSelectRowAllSkill = (eleId) => {
+        if(!this.selectedIds) {
+            this.selectedIds = [];
+        }
+        let foundId = this.selectedIds.find(_ => _ === eleId);
+        if(!foundId) {
+            this.selectedIds.push(eleId);
+        }
+    }
+    autoSelectRowAllSkillset = (eleId) => {
+        if(!this.selectedIdsSet) {
+            this.selectedIdsSet = [];
+        }
+        let foundId = this.selectedIdsSet.find(_ => _ === eleId);
+        if(!foundId) {
+            this.selectedIdsSet.push(eleId);
+        }
+    }
+     // ====  end - CR-175 ===== //
+
+    // ====  start - CR-175 ===== //
+    handleCellChange = (event) => {
+        console.log('draft val==  '+JSON.stringify( event.detail));
+        let draftValues = this.parseData(event.detail.customDraftChanges ? event.detail.customDraftChanges : event.detail.draftValues);
+        let isNewPrimarySkillSelected = (draftValues || []).some(_ => _.primarySkill);
+
+        let tempTableData = [...(this.skillCertificationData ? JSON.parse(JSON.stringify(this.skillCertificationData)) : [])];
+        this.skillCertificationData = [];
+
+        let tableData = tempTableData.map(ele => {
+            if(isNewPrimarySkillSelected) {
+                ele.primarySkill = false;
+            }
+            let foundItem = (draftValues || []).find(_ => _.id == ele.id);
+            if(foundItem) {
+                if(foundItem.hasOwnProperty("minimumRating")) {
+                    ele.minimumRating = foundItem.minimumRating;
+                }
+
+                if(foundItem.hasOwnProperty("primarySkill")) {
+                    ele.primarySkill = foundItem.primarySkill;
+                }
+
+                this.autoSelectRowAllSkill(ele.id);
+            }
+            return ele;
+        });
+
+        console.log('tempSkillCertificationData ==> ', this.skillCertificationData);
+        let tableSelectedIds = this.selectedIds;
+        
+        this.isSpinner = true;
+        setTimeout(() => {
+            this.skillCertificationData = [...tableData];
+
+            this.dispatchEvent(new CustomEvent('skillcertificationhandler', {
+                detail: {
+                    skillCertificationData: tableData,
+                    skillCertificationDataSet: this.skillCertificationDataSet,
+                    selectedIds: tableSelectedIds,
+                    isSpinner: true
+                }
+            }));
+
+            this.isSpinner = false;
+        }, 100);
+    }
+    // ====  end - CR-175 ===== //
 
     handleCellChangeSet(event){
         console.log('draft val==  '+JSON.stringify( event.detail));
 
-         this.skillCertificationDataSet.forEach(ele => {
+        this.skillCertificationDataSet.forEach(ele => {
             ele.data.forEach(chileElement => {
                 if(chileElement.id == event.detail.draftValues[0].id){
                     chileElement["minimumRating"] = event.detail.draftValues[0].minimumRating;
                 }
 
+                this.autoSelectRowAllSkillset(ele.id); // CR-175
             })
         })
         this.dispatchEvent(new CustomEvent('skillcertificationhandler', {
@@ -538,7 +669,7 @@ export default class AddCertificationSkill extends LightningElement {
 
         if(this.skillCertificationData.length > 0 && this.selectedIds.length>0){
             this.skillCertificationData.forEach(ele => {
-                if(this.selectedIds.includes(ele.id)){
+                // if(this.selectedIds.includes(ele.id)){  // CR-175
                     if(this.skillCertificationData.length == 1 && ele.minimumRating == '' && ele.certificationId == ''){
                         console.log('1111');
                         allSkillIsFilled = true;
@@ -549,7 +680,7 @@ export default class AddCertificationSkill extends LightningElement {
                         console.log('33333');
                         allSkillIsFilled = false;
                     }
-                }
+                // } // CR-175
             })
             console.log('allSkillIsFilled--- '+allSkillIsFilled);
         }
@@ -557,7 +688,7 @@ export default class AddCertificationSkill extends LightningElement {
         if(this.skillCertificationDataSet.length>0){
             this.skillCertificationDataSet.forEach(ele => {
                 for (const element of ele.data) {
-                    if(ele.selectedIds.includes(element.id)){
+                    // if(ele.selectedIds.includes(element.id)){   // CR-175
                         if(ele.data.length == 1 && ((element.minimumRating != '' && element.id == '') || (element.minimumRating == '' && element.id != '') )){
                             console.log('22222');
                             allSkillIsFilledSet = false;
@@ -567,7 +698,7 @@ export default class AddCertificationSkill extends LightningElement {
                             allSkillIsFilledSet = false;
                             break;
                         }
-                    }
+                    // }   // CR-175
                     console.log('@@-- '+element);
                 }
             });
